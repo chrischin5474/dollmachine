@@ -1,0 +1,976 @@
+/* 可愛黏土風娃娃機拼字遊戲 - CSS 樣式表 */
+
+/* 全域設定與主題變數 */
+:root {
+  --font-family: 'Fredoka', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  
+  /* 黏土風馬卡龍配色 */
+  --clay-pink: #ffd3d3;
+  --clay-pink-dark: #f0a2a2;
+  --clay-blue: #cbe3fc;
+  --clay-blue-dark: #8cbdf5;
+  --clay-green: #d1f2d9;
+  --clay-green-dark: #8cd49c;
+  --clay-yellow: #fff2cc;
+  --clay-yellow-dark: #ebd07a;
+  --clay-purple: #f3e5f5;
+  --clay-purple-dark: #d1b3d8;
+  
+  --bg-pastel-gradient: linear-gradient(135deg, #fff5f5 0%, #f0f7ff 100%);
+  --border-radius-lg: 32px;
+  --border-radius-md: 20px;
+  --border-radius-sm: 12px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-family);
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+body {
+  background: var(--bg-pastel-gradient);
+  background-image: url('assets/background.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  overflow: hidden;
+}
+
+/* 遊戲主容器 */
+.game-container {
+  position: relative; /* 🚀 設定為相對定位，讓內含的彈窗與遮罩能完美覆蓋此容器 */
+  overflow: hidden;   /* 🚀 隱藏超出邊界的內容，並配合繼承圓角 */
+  width: 100%;
+  max-width: 1080px;
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 8px solid rgba(255, 255, 255, 0.8);
+  border-radius: var(--border-radius-lg);
+  padding: 25px;
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.08),
+    inset 0 4px 10px rgba(255, 255, 255, 0.6);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* 頂部資訊看板 */
+.top-dashboard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: var(--border-radius-md);
+  padding: 12px 24px;
+  border: 4px solid #fff;
+  box-shadow: 
+    0 8px 16px rgba(0, 0, 0, 0.04),
+    inset 0 -4px 0px rgba(0, 0, 0, 0.05);
+}
+
+.stat-bubble {
+  background: var(--clay-pink);
+  color: #7b4343;
+  font-size: 1.3rem;
+  font-weight: 700;
+  padding: 8px 20px;
+  border-radius: 50px;
+  border: 3px solid #fff;
+  box-shadow: 
+    0 6px 0 var(--clay-pink-dark),
+    0 8px 10px rgba(0, 0, 0, 0.06),
+    inset 0 4px 4px rgba(255, 255, 255, 0.4);
+  display: inline-block;
+}
+
+.completed-count {
+  background: var(--clay-green);
+  color: #3b6b47;
+  box-shadow: 
+    0 6px 0 var(--clay-green-dark),
+    0 8px 10px rgba(0, 0, 0, 0.06),
+    inset 0 4px 4px rgba(255, 255, 255, 0.4);
+}
+
+/* 進度圓點 */
+.progress-dots {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+}
+
+.dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #e0e0e0;
+  border: 2.5px solid #fff;
+  box-shadow: inset 0 2px 3px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+}
+
+.dot.correct {
+  background: #a3e2ab;
+  box-shadow: 
+    0 2px 4px rgba(0,0,0,0.05),
+    inset 0 2px 3px rgba(255,255,255,0.4);
+}
+
+.dot.incorrect {
+  background: #fca5a5;
+  box-shadow: 
+    0 2px 4px rgba(0,0,0,0.05),
+    inset 0 2px 3px rgba(255,255,255,0.4);
+}
+
+.dot.active {
+  background: #a5dbfc;
+  transform: scale(1.25);
+  box-shadow: 
+    0 0 8px rgba(165,219,252,0.8),
+    0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* 頂部按鈕區域 */
+.top-actions {
+  display: flex;
+  flex-direction: row !important; /* 強制水平排列，防止舊瀏覽器快取造成垂直重疊 */
+  gap: 12px;
+  align-items: center;
+}
+
+/* 設定按鈕與離開按鈕 */
+.settings-btn {
+  background: #f3e5f5;
+  border: 3px solid #fff;
+  font-size: 1.3rem;
+  padding: 8px;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 
+    0 5px 0 var(--clay-purple-dark),
+    0 6px 8px rgba(0, 0, 0, 0.08);
+  transition: transform 0.1s, box-shadow 0.1s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.settings-btn:active {
+  transform: translateY(4px);
+  box-shadow: 
+    0 1px 0 var(--clay-purple-dark),
+    0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.exit-in-game-btn {
+  background: var(--clay-pink);
+  color: #7b4343;
+  border: 3px solid #fff;
+  font-size: 1.05rem;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  box-shadow: 
+    0 5px 0 var(--clay-pink-dark),
+    0 6px 8px rgba(0, 0, 0, 0.08);
+  transition: transform 0.1s, box-shadow 0.1s;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.exit-in-game-btn:active {
+  transform: translateY(4px);
+  box-shadow: 
+    0 1px 0 var(--clay-pink-dark),
+    0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+/* 娃娃機主框體 */
+.doll-machine-frame {
+  display: flex;
+  background: #ffdbe2; /* 溫暖的粉紅外框 */
+  border-radius: var(--border-radius-md);
+  border: 10px solid #fff;
+  box-shadow: 
+    0 15px 30px rgba(0, 0, 0, 0.08),
+    inset 0 -8px 0 rgba(0, 0, 0, 0.05),
+    inset 0 8px 0 rgba(255, 255, 255, 0.4);
+  overflow: hidden;
+  height: 480px;
+  position: relative;
+}
+
+/* 娃娃機玻璃視窗 */
+.machine-window {
+  flex: 1;
+  background: linear-gradient(180deg, #eef7ff 0%, #dcf0ff 100%);
+  position: relative;
+  overflow: hidden;
+  border-right: 10px solid #fff;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 爪子滑軌與鋼絲 */
+.claw-rail {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 25px;
+  background: rgba(0, 0, 0, 0.05);
+  border-bottom: 3px dashed rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+.claw-string {
+  position: absolute;
+  top: 15px;
+  left: 50%;
+  width: 6px;
+  background: linear-gradient(90deg, #999, #ccc, #888);
+  height: 40px; /* 初始長度 */
+  transform: translateX(-50%);
+  z-index: 11;
+  border-radius: 3px;
+  box-shadow: 1px 0 3px rgba(0,0,0,0.15);
+}
+
+.claw-body {
+  position: absolute;
+  top: 55px; /* 緊貼鋼絲下方 */
+  left: 50%;
+  width: 90px;
+  height: 90px;
+  transform: translateX(-50%);
+  z-index: 12;
+  transition: transform 0.1s ease;
+}
+
+.claw-body img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15));
+  mix-blend-mode: multiply; /* 🚀 利用 CSS 混合模式，完美去除 JPG 爪子的白底，保留半透明陰影 */
+}
+
+/* 可愛黏土動物看板 */
+.animals-banner {
+  width: 100%;
+  height: 200px;
+  position: absolute;
+  top: 15px;
+  left: 0;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.animals-banner .banner-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-bottom: 6px solid #ffccd5;
+}
+
+/* 傳送帶與滾動軌道 */
+.conveyor-belt {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 110px;
+  background: linear-gradient(180deg, #fce4ec 0%, #f8bbd0 100%);
+  border-top: 8px solid #ff8da1;
+  box-shadow: inset 0 8px 10px rgba(0,0,0,0.05);
+  z-index: 8;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  overflow: hidden;
+}
+
+.belt-track {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.belt-arrow {
+  position: absolute;
+  left: 15px;
+  bottom: 30px;
+  width: 45px;
+  height: 45px;
+  background: var(--clay-green);
+  border: 4px solid #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #3b6b47;
+  font-size: 1.4rem;
+  font-weight: bold;
+  box-shadow: 
+    0 4px 0 var(--clay-green-dark),
+    0 5px 8px rgba(0, 0, 0, 0.1),
+    inset 0 3px 3px rgba(255,255,255,0.4);
+  z-index: 9;
+}
+
+/* 字母圓球 (黏土風格) */
+.clay-ball {
+  position: absolute;
+  top: 15px;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  border: 4px solid #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #fff;
+  text-shadow: 1px 2px 2px rgba(0,0,0,0.15);
+  box-shadow: 
+    0 8px 12px rgba(0, 0, 0, 0.15),
+    inset 0 -8px 0px rgba(0, 0, 0, 0.1),
+    inset 0 8px 0px rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+/* 隨機為字母圓球上色 */
+.clay-ball.color-0 { background: #ffb7b2; box-shadow: 0 8px 12px rgba(0,0,0,0.12), inset 0 -8px 0px rgba(184, 86, 80, 0.15), inset 0 8px 0px rgba(255,255,255,0.4); }
+.clay-ball.color-1 { background: #b5e2b9; box-shadow: 0 8px 12px rgba(0,0,0,0.12), inset 0 -8px 0px rgba(78, 142, 83, 0.15), inset 0 8px 0px rgba(255,255,255,0.4); }
+.clay-ball.color-2 { background: #a8dadc; box-shadow: 0 8px 12px rgba(0,0,0,0.12), inset 0 -8px 0px rgba(67, 126, 128, 0.15), inset 0 8px 0px rgba(255,255,255,0.4); }
+.clay-ball.color-3 { background: #ffdac1; box-shadow: 0 8px 12px rgba(0,0,0,0.12), inset 0 -8px 0px rgba(200, 143, 102, 0.15), inset 0 8px 0px rgba(255,255,255,0.4); }
+.clay-ball.color-4 { background: #e8dbfc; box-shadow: 0 8px 12px rgba(0,0,0,0.12), inset 0 -8px 0px rgba(154, 120, 203, 0.15), inset 0 8px 0px rgba(255,255,255,0.4); }
+
+.clay-ball.grabbed {
+  z-index: 100;
+  box-shadow: 0 10px 15px rgba(0,0,0,0.2) !important;
+}
+
+/* 右側控制面板 */
+.control-panel {
+  width: 175px; /* 微調寬度以容納更大按鈕 */
+  background: #fbc2c8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  padding: 15px 8px;
+  gap: 12px;
+}
+
+/* 野豬頭裝飾 */
+.decor-clay-head {
+  width: 80px;
+  height: 80px;
+  background: #df98a1;
+  border-radius: var(--border-radius-sm);
+  border: 4px solid #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  box-shadow: 
+    0 6px 0 #bc727b,
+    0 8px 8px rgba(0,0,0,0.06),
+    inset 0 4px 4px rgba(255,255,255,0.2);
+}
+
+.pronounce-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.pronounce-label {
+  color: #8c424a;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+/* 發音按鈕 (平板優化：放大至 75px) */
+.sound-btn {
+  width: 75px;
+  height: 75px;
+  border-radius: 50%;
+  border: 4px solid #fff;
+  background: var(--clay-pink);
+  font-size: 2.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 
+    0 6px 0 var(--clay-pink-dark),
+    0 8px 10px rgba(0, 0, 0, 0.08),
+    inset 0 4px 4px rgba(255, 255, 255, 0.4);
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.sound-btn:active {
+  transform: translateY(5px);
+  box-shadow: 
+    0 1px 0 var(--clay-pink-dark),
+    0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+/* 搖桿與控制鍵區域 (平板優化：重新排版，按鈕更為大氣) */
+.joystick-section {
+  display: grid;
+  grid-template-areas: 
+    ". grab ."
+    "left grab right";
+  grid-template-columns: 55px 75px 55px; /* 微調以適應更大按鈕 */
+  grid-template-rows: 25px 50px;
+  align-items: center;
+  justify-items: center;
+  gap: 5px;
+  width: 100%;
+}
+
+.left-btn {
+  grid-area: left;
+}
+
+.right-btn {
+  grid-area: right;
+}
+
+/* 左右方向按鈕 (平板優化：放大至 50px) */
+.control-btn {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: var(--clay-blue);
+  color: #3b5f8c;
+  border: 3px solid #fff;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 
+    0 5px 0 var(--clay-blue-dark),
+    0 6px 8px rgba(0, 0, 0, 0.08),
+    inset 0 3px 3px rgba(255,255,255,0.4);
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.control-btn:active {
+  transform: translateY(4px);
+  box-shadow: 
+    0 1px 0 var(--clay-blue-dark),
+    0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+/* 大綠抓取按鈕 (平板優化：放大至 75px) */
+.grab-btn {
+  grid-area: grab;
+  width: 75px;
+  height: 75px;
+  border-radius: 50%;
+  background: var(--clay-green);
+  color: #2b5434;
+  border: 4px solid #fff;
+  font-size: 1.8rem;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 
+    0 7px 0 var(--clay-green-dark),
+    0 9px 12px rgba(0, 0, 0, 0.1),
+    inset 0 4px 4px rgba(255, 255, 255, 0.4);
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.grab-btn:active {
+  transform: translateY(6px);
+  box-shadow: 
+    0 1px 0 var(--clay-green-dark),
+    0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+/* 底部面板區 */
+.bottom-panels {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+}
+
+.slots-panel, .hint-panel {
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: var(--border-radius-md);
+  border: 4px solid #fff;
+  padding: 15px 20px;
+  box-shadow: 
+    0 10px 20px rgba(0,0,0,0.04),
+    inset 0 -4px 0 rgba(0,0,0,0.04);
+}
+
+.panel-title {
+  font-size: 1.1rem;
+  color: #7d7d7d;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+/* 已夾到字母虛線框 */
+.letter-slots {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  align-items: center;
+  min-height: 70px;
+}
+
+.slot {
+  width: 60px;
+  height: 60px;
+  border: 3.5px dashed #ccc;
+  border-radius: var(--border-radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #3b5f8c;
+  background: rgba(245, 245, 245, 0.5);
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.slot.filled {
+  border: 3.5px solid #fff;
+  background: var(--clay-blue);
+  color: #2b4f74;
+  box-shadow: 
+    0 4px 0 var(--clay-blue-dark),
+    0 5px 6px rgba(0, 0, 0, 0.05),
+    inset 0 4px 4px rgba(255, 255, 255, 0.4);
+}
+
+/* 中文提示 */
+.hint-text {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #d85261;
+  text-align: center;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-shadow: 1px 2px 0px rgba(255, 255, 255, 0.8);
+}
+
+/* Google Sheets 設定彈窗 (🚀 移入 game-container 後改為絕對定位以覆蓋遊戲版面) */
+.modal-overlay {
+  position: absolute; /* 改為絕對定位，相對於 .game-container */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  border-radius: inherit; /* 繼承 .game-container 的圓角 */
+}
+
+.modal-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* 黏土質感彈窗 */
+.clay-modal {
+  background: #fff;
+  border-radius: var(--border-radius-lg);
+  border: 8px solid #fff;
+  padding: 30px;
+  box-shadow: 
+    0 25px 50px rgba(0, 0, 0, 0.15),
+    inset 0 -8px 0px rgba(0, 0, 0, 0.05);
+  max-width: 500px;
+  width: 90%;
+  max-height: 85vh;
+  overflow-y: auto;
+  transform: translateY(30px);
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.modal-overlay.open .clay-modal {
+  transform: translateY(0);
+}
+
+.clay-modal h2 {
+  font-size: 1.8rem;
+  color: #6a4c93;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.clay-modal p {
+  color: #666;
+  line-height: 1.5;
+  margin-bottom: 20px;
+  font-size: 1rem;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.input-group label {
+  font-weight: 700;
+  color: #555;
+  font-size: 0.95rem;
+}
+
+.input-group input {
+  padding: 12px 16px;
+  border-radius: var(--border-radius-sm);
+  border: 3.5px solid #e0e0e0;
+  font-size: 1rem;
+  outline: none;
+  background: #fafafa;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+  transition: border-color 0.2s;
+}
+
+.input-group input:focus {
+  border-color: var(--clay-blue-dark);
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 25px;
+}
+
+.modal-btn {
+  flex: 1;
+  padding: 10px 16px;
+  border-radius: var(--border-radius-sm);
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: 3px solid #fff;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.save-btn {
+  background: var(--clay-green);
+  color: #2b5434;
+  box-shadow: 0 4px 0 var(--clay-green-dark), 0 5px 6px rgba(0,0,0,0.08);
+}
+.save-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--clay-green-dark); }
+
+.clear-btn {
+  background: var(--clay-yellow);
+  color: #6d5b24;
+  box-shadow: 0 4px 0 var(--clay-yellow-dark), 0 5px 6px rgba(0,0,0,0.08);
+}
+.clear-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--clay-yellow-dark); }
+
+.close-btn {
+  background: var(--clay-pink);
+  color: #7b4343;
+  box-shadow: 0 4px 0 var(--clay-pink-dark), 0 5px 6px rgba(0,0,0,0.08);
+}
+.close-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--clay-pink-dark); }
+
+/* 教學指南 */
+.instructions {
+  background: #f7f9fc;
+  border-radius: var(--border-radius-sm);
+  padding: 15px;
+  border: 2px dashed #ddd;
+}
+
+.instructions h3 {
+  font-size: 1rem;
+  color: #444;
+  margin-bottom: 8px;
+}
+
+.instructions ol {
+  padding-left: 20px;
+  font-size: 0.88rem;
+  color: #555;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.inst-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 5px;
+  font-size: 0.8rem;
+}
+
+.inst-table th, .inst-table td {
+  border: 1px solid #ddd;
+  padding: 4px 8px;
+  text-align: left;
+}
+
+.inst-table th {
+  background: #eee;
+}
+
+/* 答對/過關動畫遮罩 (🚀 移入 game-container 後改為絕對定位) */
+.celebration-overlay {
+  position: absolute; /* 改為絕對定位 */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  border-radius: inherit; /* 繼承圓角 */
+}
+
+.celebration-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.celebration-box {
+  text-align: center;
+  max-width: 400px;
+  width: 80%;
+  animation: scalePop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.celebration-emoji {
+  font-size: 4rem;
+  margin-bottom: 10px;
+  animation: bounceEmoji 1s infinite alternate;
+}
+
+.celebration-text {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #ff5e7e;
+  margin-bottom: 5px;
+}
+
+.celebration-word {
+  font-size: 3rem;
+  font-weight: 800;
+  color: #3b5f8c;
+  letter-spacing: 2px;
+  margin-bottom: 25px;
+  text-shadow: 1px 2px 2px rgba(0,0,0,0.1);
+}
+
+.next-btn {
+  width: 80%;
+  padding: 12px 24px;
+  border-radius: var(--border-radius-md);
+  background: var(--clay-green);
+  color: #2b5434;
+  border: 4px solid #fff;
+  font-size: 1.3rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 
+    0 6px 0 var(--clay-green-dark),
+    0 8px 10px rgba(0,0,0,0.1);
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.next-btn:active {
+  transform: translateY(5px);
+  box-shadow: 
+    0 1px 0 var(--clay-green-dark),
+    0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* 🚀 Start Screen / 歡迎首頁遮罩樣式 (🚀 移入 game-container 後改為絕對定位，完美包覆遊戲容器) */
+.welcome-overlay {
+  position: absolute; /* 🚀 改為絕對定位，讓遮罩緊貼且侷限在 .game-container 之內 */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 235, 238, 0.45); /* 柔和馬卡龍粉紅底層 */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+  border-radius: inherit; /* 🚀 繼承遊戲外框的圓角 */
+}
+
+.welcome-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.welcome-box {
+  text-align: center;
+  max-width: 480px;
+  width: 90%;
+  background: #fff;
+  border-radius: var(--border-radius-lg);
+  border: 8px solid #fff;
+  padding: 40px 30px;
+  box-shadow: 
+    0 25px 50px rgba(0, 0, 0, 0.15),
+    inset 0 -8px 0px rgba(0, 0, 0, 0.05);
+  animation: scalePop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.welcome-logo {
+  font-size: 5rem;
+  margin-bottom: 15px;
+  animation: bounceEmoji 1.5s infinite alternate;
+  display: inline-block;
+}
+
+.welcome-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #ff5e7e;
+  line-height: 1.3;
+  margin-bottom: 12px;
+  text-shadow: 1px 2px 0px rgba(255, 255, 255, 0.8);
+}
+
+.welcome-subtitle {
+  font-size: 1.1rem;
+  color: #7d7d7d;
+  line-height: 1.5;
+  margin-bottom: 30px;
+}
+
+.welcome-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  align-items: center;
+  width: 100%;
+}
+
+.welcome-btn {
+  width: 85%;
+  padding: 14px 28px;
+  border-radius: var(--border-radius-md);
+  font-size: 1.3rem;
+  font-weight: 800;
+  cursor: pointer;
+  border: 4px solid #fff;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.welcome-btn.start-btn {
+  background: var(--clay-green);
+  color: #2b5434;
+  box-shadow: 
+    0 7px 0 var(--clay-green-dark),
+    0 9px 12px rgba(0, 0, 0, 0.1),
+    inset 0 4px 4px rgba(255, 255, 255, 0.4);
+}
+
+.welcome-btn.start-btn:active {
+  transform: translateY(6px);
+  box-shadow: 
+    0 1px 0 var(--clay-green-dark),
+    0 2px 4px rgba(0,0,0,0.1);
+}
+
+.welcome-btn.exit-btn {
+  background: var(--clay-pink);
+  color: #7b4343;
+  box-shadow: 
+    0 7px 0 var(--clay-pink-dark),
+    0 9px 12px rgba(0, 0, 0, 0.1),
+    inset 0 4px 4px rgba(255, 255, 255, 0.4);
+}
+
+.welcome-btn.exit-btn:active {
+  transform: translateY(6px);
+  box-shadow: 
+    0 1px 0 var(--clay-pink-dark),
+    0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* 晃動與彈跳動畫 */
+@keyframes scalePop {
+  0% { transform: scale(0.6) translateY(50px); }
+  100% { transform: scale(1) translateY(0); }
+}
+
+@keyframes bounceEmoji {
+  0% { transform: translateY(0) scale(1); }
+  100% { transform: translateY(-15px) scale(1.1); }
+}
+
+/* 震動錯誤動畫 */
+.shake-animation {
+  animation: shake 0.4s ease;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-8px); }
+  40%, 80% { transform: translateX(8px); }
+}
+
+/* 關卡點亮動畫 */
+.correct-pop {
+  animation: popActive 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes popActive {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.4); }
+  100% { transform: scale(1.2); }
+}
