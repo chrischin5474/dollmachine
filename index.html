@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>可愛黏土風娃娃機拼字遊戲 - Doll Machine Spelling Game</title>
+  <!-- 載入可愛圓潤的 Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap" rel="stylesheet">
+  <!-- 使用 v=2 參數強制瀏覽器重新載入最新的 CSS，避免快取舊樣式 -->
+  <link rel="stylesheet" href="style.css?v=2">
+</head>
+<body>
+  <div class="game-container">
+    <!-- 頂部資訊看板 -->
+    <div class="top-dashboard">
+      <div class="stat-bubble question-count">第 <span id="current-question">1</span> 題</div>
+      <div class="progress-dots" id="progress-dots">
+        <!-- 動態生成關卡進度圓點 -->
+      </div>
+      <div class="stat-bubble completed-count">完成 <span id="completed-count">0</span> 個</div>
+      <div class="top-actions">
+        <button class="settings-btn" id="settings-btn" title="設定單字庫">⚙️</button>
+        <button class="exit-in-game-btn" id="exit-in-game-btn" title="返回主畫面">🚪 離開</button>
+      </div>
+    </div>
+
+    <!-- 娃娃機主框體 -->
+    <div class="doll-machine-frame">
+      <div class="machine-window">
+        <!-- 爪子滑軌與鋼絲 -->
+        <div class="claw-rail">
+          <div class="claw-string" id="claw-string"></div>
+          <div class="claw-body" id="claw-body">
+            <img src="assets/claw.jpg" alt="爪子" id="claw-img">
+          </div>
+        </div>
+
+        <!-- 可愛黏土動物看板 (位於軌道後方/上方) -->
+        <div class="animals-banner">
+          <img src="assets/animals_header.jpg" alt="可愛動物看板" class="banner-img">
+        </div>
+
+        <!-- 傳送帶與滾動字母軌道 -->
+        <div class="conveyor-belt">
+          <div class="belt-track" id="belt-track">
+            <!-- 字母圓球會在這裡動態生成與滾動 -->
+          </div>
+          <div class="belt-arrow">▶</div>
+        </div>
+      </div>
+
+      <!-- 右側控制面板 -->
+      <div class="control-panel">
+        <div class="decor-clay-head">
+          <div class="boar-nose">🐗</div>
+        </div>
+        
+        <div class="pronounce-section">
+          <div class="pronounce-label">聽聽看</div>
+          <button class="sound-btn" id="sound-btn" title="播放單字發音">👄</button>
+        </div>
+
+        <!-- 爪子控制區 -->
+        <div class="joystick-section">
+          <button class="control-btn left-btn" id="left-btn" title="向左移動">◀</button>
+          <button class="grab-btn" id="grab-btn">按</button>
+          <button class="control-btn right-btn" id="right-btn" title="向右移動">▶</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 底部面板區 -->
+    <div class="bottom-panels">
+      <!-- 夾到的字母拼字區 -->
+      <div class="slots-panel">
+        <div class="panel-title">✏️ 夾到的字母</div>
+        <div class="letter-slots" id="letter-slots">
+          <!-- 根據單字長度動態生成虛線框 -->
+        </div>
+      </div>
+
+      <!-- 中文提示區 -->
+      <div class="hint-panel">
+        <div class="panel-title">提示</div>
+        <div class="hint-text" id="hint-text">---</div>
+      </div>
+    </div>
+
+    <!-- ⚙️ Google Sheets 設定彈窗 (移入 game-container 以確保完美覆蓋) -->
+    <div class="modal-overlay" id="settings-modal">
+      <div class="modal-content clay-modal">
+        <h2>⚙️ 設定單字庫</h2>
+        <p>您可以貼上自訂的 Google Sheets CSV 連結來隨時更換遊戲中的單字！</p>
+        
+        <div class="input-group">
+          <label for="sheet-url">Google Sheet CSV / 發布網址：</label>
+          <input type="text" id="sheet-url" placeholder="https://docs.google.com/spreadsheets/d/.../pub?output=csv">
+        </div>
+
+        <div class="modal-actions">
+          <button class="modal-btn save-btn" id="save-settings-btn">儲存</button>
+          <button class="modal-btn clear-btn" id="clear-settings-btn">恢復預設</button>
+          <button class="modal-btn close-btn" id="close-modal-btn">關閉</button>
+        </div>
+
+        <div class="instructions">
+          <h3>💡 如何取得 Google Sheet CSV 網址？</h3>
+          <ol>
+            <li>建立一個 Google 試算表，第一欄 (A) 輸入 <strong>Word</strong> (單字)，第二欄 (B) 輸入 <strong>Translation</strong> (中文翻譯)。例如：
+              <table class="inst-table">
+                <tr><th>A 欄 (Word)</th><th>B 欄 (Translation)</th></tr>
+                <tr><td>FAST</td><td>快</td></tr>
+                <tr><td>PULL</td><td>拉</td></tr>
+              </table>
+            </li>
+            <li>點選左上角 <strong>檔案</strong> ➔ <strong>共用</strong> ➔ <strong>發布到網路</strong>。</li>
+            <li>在下拉選單選擇「整份文件」與「<strong>逗號分隔值 (.csv)</strong>」。</li>
+            <li>點選「發布」並複製產生的網址，貼到上方輸入框即可！</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- 🎉 答對/過關動畫遮罩 (移入 game-container 以確保完美覆蓋) -->
+    <div class="celebration-overlay" id="celebration-overlay">
+      <div class="celebration-box clay-modal">
+        <div class="celebration-emoji">🎉</div>
+        <div class="celebration-text" id="celebration-text">太棒了！</div>
+        <div class="celebration-word" id="celebration-word">FAST</div>
+        <button class="next-btn" id="next-btn">下一題</button>
+      </div>
+    </div>
+
+    <!-- 🚀 Start Screen / 歡迎首頁遮罩 (移入 game-container 以確保完美覆蓋) -->
+    <div class="welcome-overlay open" id="welcome-overlay">
+      <div class="welcome-box clay-modal">
+        <div class="welcome-logo">🧸🎪</div>
+        <h1 class="welcome-title">可愛黏土風<br>娃娃機拼字遊戲</h1>
+        <p class="welcome-subtitle" id="welcome-subtitle">操作爪子抓取滾動字母，拼出正確的英文單字！</p>
+        
+        <div class="welcome-actions">
+          <button class="welcome-btn start-btn" id="start-game-btn">開始遊戲 Start</button>
+          <button class="welcome-btn exit-btn" id="exit-game-btn">結束遊戲 Exit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 載入遊戲 JavaScript -->
+  <script src="game.js"></script>
+</body>
+</html>
