@@ -1,9 +1,15 @@
 /* 可愛黏土風娃娃機拼字遊戲 - 遊戲邏輯 JS */
 
+// 🚀 預設的 Google Sheet CSV 網址。
+// 老師可以直接把發布好的 Google Sheet CSV 連結填在下方雙引號中，例如：
+// const DEFAULT_SHEET_URL = "https://docs.google.com/spreadsheets/d/.../pub?output=csv";
+// 這樣一來，所有學生只要掃描您的 GitHub 網頁主網址，就「會自動載入」您的單字庫，完全不需手動貼上網址！
+const DEFAULT_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTNJmjTD4WABUCnich22KO3f4-gYzuVzTFexbvJfOoMCsBfALvYSXItuY8AFE4O3WC-2VKkUfVaWiph/pub?output=csv"; 
+
 // --- 遊戲常數與設定 ---
 const DEFAULT_VOCABULARY = [
   { word: "fast", translation: "快" },
-  { word: "the USA", translation: "美國" }, // 🚀 加入帶有空格的預設單字，以測試空格邏輯
+  { word: "the USA", translation: "美國" }, // 🚀 帶有空格的預設單字，以測試空格邏輯
   { word: "pull", translation: "拉" },
   { word: "clay", translation: "黏土" },
   { word: "bear", translation: "小熊" },
@@ -134,16 +140,38 @@ function speak(text, lang = "en-US") {
 
 // --- Google Sheets 資料載入與解析 ---
 function loadSettingsAndVocab() {
+  // 🚀 【機制一】：檢查網址 URL 查詢參數是否有 ?sheet=...
+  // 方便老師製作不同課堂單字庫的 QR Code (例如：?sheet=您的CSV連結)
+  const urlParams = new URLSearchParams(window.location.search);
+  const sheetParam = urlParams.get("sheet");
+  
+  if (sheetParam) {
+    const decodedUrl = decodeURIComponent(sheetParam);
+    localStorage.setItem("doll_machine_sheet_url", decodedUrl);
+    sheetUrlInput.value = decodedUrl;
+    fetchVocabulary(decodedUrl);
+    return;
+  }
+
+  // 🚀 【機制二】：檢查瀏覽器本地 LocalStorage 中是否有儲存的單字庫網址
   const savedUrl = localStorage.getItem("doll_machine_sheet_url");
   if (savedUrl) {
     sheetUrlInput.value = savedUrl;
     fetchVocabulary(savedUrl);
-  } else {
-    // 沒有自訂網址，使用預設單字
-    vocabulary = [...DEFAULT_VOCABULARY];
-    completedCount = parseInt(localStorage.getItem("doll_machine_completed") || "0");
-    completedCountEl.textContent = completedCount;
+    return;
   }
+  
+  // 🚀 【機制三】：檢查代碼最上方是否設定了預設 Google Sheet 網址
+  if (DEFAULT_SHEET_URL) {
+    sheetUrlInput.value = DEFAULT_SHEET_URL;
+    fetchVocabulary(DEFAULT_SHEET_URL);
+    return;
+  }
+  
+  // 🚀 【機制四】：沒有任何自訂網址，使用內建預設單字
+  vocabulary = [...DEFAULT_VOCABULARY];
+  completedCount = parseInt(localStorage.getItem("doll_machine_completed") || "0");
+  completedCountEl.textContent = completedCount;
 }
 
 async function fetchVocabulary(url) {
@@ -179,7 +207,6 @@ async function fetchVocabulary(url) {
     if (parsedVocab.length > 0) {
       vocabulary = parsedVocab;
       console.log("成功從 Google Sheets 載入單字庫：", vocabulary);
-      alert("單字庫載入成功！共有 " + vocabulary.length + " 個單字。");
       
       // 重置關卡進度
       vocabularyIndex = 0;
@@ -194,11 +221,10 @@ async function fetchVocabulary(url) {
       }
       initProgressDots();
     } else {
-      alert("未能在 Google Sheet 中找到有效單字。請確認欄位格式是否正確！");
+      console.warn("未能在 Google Sheet 中找到有效單字。");
     }
   } catch (error) {
     console.error("載入失敗：", error);
-    alert("單字庫載入失敗，請確認連結是否已發布到網路且為公開 CSV 格式！將載入預設單字。");
     vocabulary = [...DEFAULT_VOCABULARY];
     if (!welcomeOverlay.classList.contains("open")) {
       startNewGameRound();
