@@ -8,8 +8,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap" rel="stylesheet">
-  <!-- 使用 v=2 參數強制瀏覽器重新載入最新的 CSS，避免快取舊樣式 -->
-  <link rel="stylesheet" href="style.css?v=2">
+  <!-- 移除 ?v=2 查詢參數，避免在 file:// 本地協議下瀏覽器將參數視為檔名的一部分而導致載入失敗 -->
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="game-container">
