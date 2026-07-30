@@ -49,6 +49,7 @@ const BALL_SPEED = 2.0; // 字母滾動速度 (px/frame)
 
 // 碰撞與抓取關聯
 let grabbedBall = null;
+let grabbedBallIndex = -1; // 🚀 記錄當前夾到的字母要放入哪個拼字格索引 (支援任意順序抓取)
 let keyboardState = {};
 
 // DOM 元素引用
@@ -532,20 +533,24 @@ function checkCatchCollision() {
     grabbedBall = collidedBall;
     grabbedBall.grabbed = true;
     
-    // 檢查是不是我們所需要的下一個字母
-    // 尋找當前尚未填滿的第一個空格的索引
-    const emptyIndex = spelledLetters.indexOf("");
-    const correctNextChar = currentWordObj.word[emptyIndex];
+    // 🚀 【改良任意順序抓取邏輯】：
+    // 尋找單字中與被夾字母相符、且尚未被填入的字母索引位置
+    let targetIndex = -1;
+    for (let i = 0; i < currentWordObj.word.length; i++) {
+      if (currentWordObj.word[i] === collidedBall.char && spelledLetters[i] === "") {
+        targetIndex = i;
+        break; // 找到第一個相符的空格就填入
+      }
+    }
     
-    // 大小寫敏感比較，確保拼寫完全正確
-    if (collidedBall.char === correctNextChar) {
-      // 抓對了！
+    // 🚀 如果找到有效位置，就代表抓取正確！
+    if (targetIndex !== -1) {
       clawState = "grabbing";
+      grabbedBallIndex = targetIndex; // 暫存要填入的索引
       speak(collidedBall.char); // 唸出被抓到的字母
     } else {
-      // 抓錯了！觸發晃動鬆爪效果
+      // 抓錯了（單字中沒有該字母，或該字母在此題已經全部被夾完了）
       clawState = "shaking";
-      // 播放嗶嗶低音警告發音
       speak("Oops");
     }
   } else {
@@ -598,24 +603,23 @@ function releaseWrongLetter() {
 
 // 成功抓取正確字母，放入拼字格
 function handleSuccessfulGrab() {
-  if (!grabbedBall) return;
+  if (!grabbedBall || grabbedBallIndex === -1) return;
   
   const ball = grabbedBall;
   grabbedBall = null;
   
-  // 尋找第一個空格
-  const emptyIndex = spelledLetters.indexOf("");
-  if (emptyIndex !== -1) {
-    spelledLetters[emptyIndex] = ball.char;
-    renderLetterSlots();
-    
-    // 字母球飛向空格的動畫
-    ball.element.remove();
-    letterBalls = letterBalls.filter(b => b.id !== ball.id);
-    
-    // 檢查單字是否全部拼完
-    checkWordComplete();
-  }
+  // 🚀 放入對應的拼字格索引中 (支援任意順序)
+  spelledLetters[grabbedBallIndex] = ball.char;
+  grabbedBallIndex = -1; // 重置
+  
+  renderLetterSlots();
+  
+  // 字母球飛向空格的動畫
+  ball.element.remove();
+  letterBalls = letterBalls.filter(b => b.id !== ball.id);
+  
+  // 檢查單字是否全部拼完
+  checkWordComplete();
   
   clawState = "idle";
 }

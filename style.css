@@ -267,7 +267,7 @@ body {
   height: 100%;
   object-fit: contain;
   filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15));
-  mix-blend-mode: multiply; /* 🚀 利用 CSS 混合模式，完美去除 JPG 爪子的白底，保留半透明陰影 */
+  mix-blend-mode: multiply; /* 🚀 利用 CSS 混合模式，完美去除 JPG 爪子的 white back，保留半透明陰影 */
 }
 
 /* 可愛黏土動物看板 */
@@ -576,9 +576,11 @@ body {
 
 /* 🚀 空格分隔符樣式：純空格，不帶邊框與背景，自然分隔單字 */
 .slot-spacer {
-  width: 28px;
+  width: 32px;
   height: 60px;
   display: inline-block;
+  flex-shrink: 0 !important; /* 🚀 強制設定為 0，防止 Flexbox 壓縮此空格元素 */
+  min-width: 32px !important;  /* 🚀 強制設定最小寬度，防止寬度縮小為 0 */
 }
 
 /* 中文提示 */
