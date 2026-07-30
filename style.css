@@ -203,7 +203,7 @@ body {
 /* 娃娃機主框體 */
 .doll-machine-frame {
   display: flex;
-  background: #ffdbe2; /* 溫暖的粉紅外框 */
+  background: #ffdbe2; /* 溫慢的粉紅外框 */
   border-radius: var(--border-radius-md);
   border: 10px solid #fff;
   box-shadow: 
@@ -541,6 +541,7 @@ body {
 /* 已夾到字母虛線框 */
 .letter-slots {
   display: flex;
+  flex-wrap: wrap; /* 🚀 允許長單字或片語在小螢幕上折行 */
   gap: 12px;
   justify-content: center;
   align-items: center;
@@ -571,6 +572,13 @@ body {
     0 4px 0 var(--clay-blue-dark),
     0 5px 6px rgba(0, 0, 0, 0.05),
     inset 0 4px 4px rgba(255, 255, 255, 0.4);
+}
+
+/* 🚀 空格分隔符樣式：純空格，不帶邊框與背景，自然分隔單字 */
+.slot-spacer {
+  width: 28px;
+  height: 60px;
+  display: inline-block;
 }
 
 /* 中文提示 */

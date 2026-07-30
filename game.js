@@ -3,6 +3,7 @@
 // --- 遊戲常數與設定 ---
 const DEFAULT_VOCABULARY = [
   { word: "fast", translation: "快" },
+  { word: "the USA", translation: "美國" }, // 🚀 加入帶有空格的預設單字，以測試空格邏輯
   { word: "pull", translation: "拉" },
   { word: "clay", translation: "黏土" },
   { word: "bear", translation: "小熊" },
@@ -10,8 +11,7 @@ const DEFAULT_VOCABULARY = [
   { word: "jump", translation: "跳" },
   { word: "play", translation: "玩" },
   { word: "happy", translation: "快樂" },
-  { word: "sweet", translation: "甜的" },
-  { word: "animal", translation: "動物" }
+  { word: "sweet", translation: "甜的" }
 ];
 
 // 預設遊戲進度長度 (10 題一輪)
@@ -142,7 +142,6 @@ function loadSettingsAndVocab() {
     vocabulary = [...DEFAULT_VOCABULARY];
     completedCount = parseInt(localStorage.getItem("doll_machine_completed") || "0");
     completedCountEl.textContent = completedCount;
-    // 先不啟動題關，等到玩家點擊 Start 後啟動
   }
 }
 
@@ -169,7 +168,8 @@ async function fetchVocabulary(url) {
       const row = rows[i];
       if (row.length >= 2 && row[0] && row[1]) {
         parsedVocab.push({
-          word: row[0].trim().replace(/[^a-zA-Z]/g, ''), // 保留原本的大小寫字母
+          // 🚀 修改過濾正則：[^a-zA-Z ] 允許英文字母與空格 (保留空格)
+          word: row[0].trim().replace(/[^a-zA-Z ]/g, ''), 
           translation: row[1].trim()
         });
       }
@@ -277,6 +277,13 @@ function startNewGameRound() {
   // 初始化拼字格
   spelledLetters = Array(currentWordObj.word.length).fill("");
   
+  // 🚀 空格特殊處理：如果單字字元是空格，直接在 spelledLetters 填入空格，這樣就不需要玩家去夾空格球
+  for (let i = 0; i < currentWordObj.word.length; i++) {
+    if (currentWordObj.word[i] === " ") {
+      spelledLetters[i] = " ";
+    }
+  }
+  
   // 更新介面
   currentQuestionEl.textContent = currentQuestionIndex + 1;
   hintTextEl.textContent = currentWordObj.translation;
@@ -294,12 +301,20 @@ function startNewGameRound() {
 
 function renderLetterSlots() {
   letterSlotsContainer.innerHTML = "";
-  spelledLetters.forEach(letter => {
+  // 🚀 空格特殊處理：遍歷原單字，若是空格則生成間隔元素 (slot-spacer)
+  for (let i = 0; i < currentWordObj.word.length; i++) {
+    const char = currentWordObj.word[i];
+    const letter = spelledLetters[i];
+    
     const slot = document.createElement("div");
-    slot.className = "slot" + (letter ? " filled" : "");
-    slot.textContent = letter;
+    if (char === " ") {
+      slot.className = "slot-spacer";
+    } else {
+      slot.className = "slot" + (letter ? " filled" : "");
+      slot.textContent = letter;
+    }
     letterSlotsContainer.appendChild(slot);
-  });
+  }
 }
 
 // --- 字母生成與滾動邏輯 ---
@@ -808,10 +823,10 @@ function setupEventListeners() {
   });
 }
 
+// 🚀 改良抓取發射動作：如果為空格，則發音 "Space" 
 function triggerGrab() {
   if (clawState === "idle" && !welcomeOverlay.classList.contains("open")) {
     clawState = "dropping";
-    // 撥放一個發射音效/發音
     speak("Down");
   }
 }
